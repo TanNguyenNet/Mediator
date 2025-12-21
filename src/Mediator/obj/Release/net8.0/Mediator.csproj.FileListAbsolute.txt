@@ -1,0 +1,12 @@
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.csproj.AssemblyReference.cache
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.AssemblyInfoInputs.cache
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.AssemblyInfo.cs
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.csproj.CoreCompileInputs.cache
+C:\Data\Libs\Mediator\src\Mediator\bin\Release\net8.0\Mediator.deps.json
+C:\Data\Libs\Mediator\src\Mediator\bin\Release\net8.0\Mediator.dll
+C:\Data\Libs\Mediator\src\Mediator\bin\Release\net8.0\Mediator.pdb
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.dll
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\refint\Mediator.dll
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.pdb
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\ref\Mediator.dll

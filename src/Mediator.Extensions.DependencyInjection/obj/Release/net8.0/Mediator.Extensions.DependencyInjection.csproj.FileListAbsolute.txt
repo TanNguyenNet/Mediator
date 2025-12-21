@@ -1,0 +1,15 @@
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\bin\Release\net8.0\Mediator.Extensions.DependencyInjection.deps.json
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\bin\Release\net8.0\Mediator.Extensions.DependencyInjection.dll
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\bin\Release\net8.0\Mediator.Extensions.DependencyInjection.pdb
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\bin\Release\net8.0\Mediator.dll
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\bin\Release\net8.0\Mediator.pdb
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.Extensions.DependencyInjection.csproj.AssemblyReference.cache
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.Extensions.DependencyInjection.GeneratedMSBuildEditorConfig.editorconfig
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.Extensions.DependencyInjection.AssemblyInfoInputs.cache
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.Extensions.DependencyInjection.AssemblyInfo.cs
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.Extensions.DependencyInjection.csproj.CoreCompileInputs.cache
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.CEF878DC.Up2Date
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.Extensions.DependencyInjection.dll
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\refint\Mediator.Extensions.DependencyInjection.dll
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\Mediator.Extensions.DependencyInjection.pdb
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Release\net8.0\ref\Mediator.Extensions.DependencyInjection.dll

@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "kQKP7/QeYfM=",
+  "success": true,
+  "projectFilePath": "C:\\Data\\Libs\\Mediator\\src\\Mediator\\Mediator.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\itnbt\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\itnbt\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\itnbt\\.nuget\\packages\\microsoft.extensions.objectpool\\8.0.0\\microsoft.extensions.objectpool.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,319 @@
+Build started 21/12/2025 10:56:25 SA.
+     1>Project "C:\Data\Libs\Mediator\Mediator.sln" on node 1 (VSTest target(s)).
+     1>ValidateSolutionConfiguration:
+         Building solution configuration "Debug|Any CPU".
+Test run for C:\Data\Libs\Mediator\tests\Mediator.Tests\bin\Debug\net8.0\Mediator.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.4.1+b9eacec401 (64-bit .NET 8.0.22)
+[xUnit.net 00:00:00.34]   Discovering: Mediator.Tests
+[xUnit.net 00:00:00.52]   Discovered:  Mediator.Tests
+[xUnit.net 00:00:00.53]   Starting:    Mediator.Tests
+  Passed Mediator.Tests.ValidationTests.ValidationException_ContainsErrors [43 ms]
+  Passed Mediator.Tests.UnitTests.Unit_Value_IsSingleton [43 ms]
+  Passed Mediator.Tests.UnitTests.Unit_ToString_ReturnsEmptyTuple [5 ms]
+  Passed Mediator.Tests.UnitTests.Unit_Task_ReturnsUnitValue [1 ms]
+  Passed Mediator.Tests.UnitTests.Unit_EqualsObject_FalseForNonUnit [1 ms]
+  Passed Mediator.Tests.UnitTests.Unit_Task_ReturnsCachedTask [1 ms]
+  Passed Mediator.Tests.UnitTests.Unit_EqualsObject_TrueForUnit [< 1 ms]
+  Passed Mediator.Tests.UnitTests.Unit_GetHashCode_AlwaysZero [3 ms]
+  Passed Mediator.Tests.UnitTests.Unit_Equals_AlwaysTrue [< 1 ms]
+  Passed Mediator.Tests.UnitTests.Unit_CompareTo_AlwaysZero [< 1 ms]
+  Passed Mediator.Tests.UnitTests.Unit_ComparisonOperators_WorkCorrectly [< 1 ms]
+  Passed Mediator.Tests.UnitTests.Unit_IsReadonlyStruct [< 1 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_MultipleAssemblies_RegistersFromAll [76 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_WithFluentConfiguration_Works [3 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_RegistersBehaviors [14 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_ISenderAndIPublisher_AreSameInstance [2 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_WithConfiguration_AppliesLifetime [4 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_RegistersISender [1 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.MediatorServiceConfiguration_DefaultValues_AreCorrect [2 ms]
+  Passed Mediator.Tests.PublishTests.Publish_MultipleNotifications_AllHandled [118 ms]
+  Passed Mediator.Tests.ValidationTests.ValidationBehavior_WithValidRequest_PassesThrough [58 ms]
+  Passed Mediator.Tests.PipelineBehaviorTests.Behavior_ExecutesBeforeAndAfterHandler [110 ms]
+  Passed Mediator.Tests.PublishTests.Publish_NotifiesAllHandlers [2 ms]
+  Passed Mediator.Tests.PipelineBehaviorTests.Behavior_WithNoBehaviors_HandlerStillExecutes [2 ms]
+  Passed Mediator.Tests.PipelineBehaviorTests.Behavior_PassesRequestToHandler [3 ms]
+  Passed Mediator.Tests.ValidationTests.ValidationResult_Failure_IsNotValid [7 ms]
+  Passed Mediator.Tests.PipelineBehaviorTests.MultipleBehaviors_ExecuteInCorrectOrder [11 ms]
+  Passed Mediator.Tests.PipelineBehaviorTests.Behavior_CanShortCircuitPipeline [8 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_RegistersRequestHandlers [37 ms]
+[xUnit.net 00:00:01.00]     Mediator.Tests.ProcessorTests.NoProcessors_HandlerStillExecutes [FAIL]
+[xUnit.net 00:00:01.01]       System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPostProcessor'.
+[xUnit.net 00:00:01.01]       Stack Trace:
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+[xUnit.net 00:00:01.02]            at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+[xUnit.net 00:00:01.02]         C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs(35,0): at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.02]         C:\Data\Libs\Mediator\src\Mediator\Mediator.cs(65,0): at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.02]         C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs(168,0): at Mediator.Tests.ProcessorTests.NoProcessors_HandlerStillExecutes()
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.02]     Mediator.Tests.ProcessorTests.PostProcessor_ExecutesAfterHandler [FAIL]
+[xUnit.net 00:00:01.02]       System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPostProcessor'.
+[xUnit.net 00:00:01.02]       Stack Trace:
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+[xUnit.net 00:00:01.02]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+[xUnit.net 00:00:01.03]            at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+[xUnit.net 00:00:01.03]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+[xUnit.net 00:00:01.03]         C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs(35,0): at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.03]         C:\Data\Libs\Mediator\src\Mediator\Mediator.cs(65,0): at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.03]         C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs(84,0): at Mediator.Tests.ProcessorTests.PostProcessor_ExecutesAfterHandler()
+[xUnit.net 00:00:01.03]         --- End of stack trace from previous location ---
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_RegistersNotificationHandlers [1 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_RegistersIMediator [1 ms]
+  Passed Mediator.Tests.DependencyInjectionTests.AddMediator_RegistersIPublisher [1 ms]
+  Passed Mediator.Tests.SendTests.Send_ConcurrentRequests_AllHandledCorrectly [168 ms]
+  Failed Mediator.Tests.ProcessorTests.NoProcessors_HandlerStillExecutes [111 ms]
+  Error Message:
+   System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPostProcessor'.
+  Stack Trace:
+     at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs:line 35
+   at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Mediator.cs:line 65
+   at Mediator.Tests.ProcessorTests.NoProcessors_HandlerStillExecutes() in C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs:line 168
+--- End of stack trace from previous location ---
+  Failed Mediator.Tests.ProcessorTests.PostProcessor_ExecutesAfterHandler [3 ms]
+  Error Message:
+   System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPostProcessor'.
+  Stack Trace:
+     at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs:line 35
+   at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Mediator.cs:line 65
+   at Mediator.Tests.ProcessorTests.PostProcessor_ExecutesAfterHandler() in C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs:line 84
+--- End of stack trace from previous location ---
+  Passed Mediator.Tests.ValidationTests.ValidationBehavior_WithInvalidRequest_ThrowsValidationException [58 ms]
+[xUnit.net 00:00:01.03]     Mediator.Tests.ProcessorTests.MultiplePreProcessors_AllExecute [FAIL]
+[xUnit.net 00:00:01.03]       System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPreProcessor'.
+[xUnit.net 00:00:01.03]       Stack Trace:
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+[xUnit.net 00:00:01.04]            at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+[xUnit.net 00:00:01.04]         C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs(35,0): at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.04]         C:\Data\Libs\Mediator\src\Mediator\Mediator.cs(65,0): at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.04]         C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs(145,0): at Mediator.Tests.ProcessorTests.MultiplePreProcessors_AllExecute()
+[xUnit.net 00:00:01.04]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.04]     Mediator.Tests.ProcessorTests.PreProcessor_ExecutesBeforeHandler [FAIL]
+[xUnit.net 00:00:01.04]       System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPreProcessor'.
+[xUnit.net 00:00:01.04]       Stack Trace:
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+[xUnit.net 00:00:01.04]            at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+[xUnit.net 00:00:01.04]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+[xUnit.net 00:00:01.04]         C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs(35,0): at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.04]         C:\Data\Libs\Mediator\src\Mediator\Mediator.cs(65,0): at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.04]         C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs(60,0): at Mediator.Tests.ProcessorTests.PreProcessor_ExecutesBeforeHandler()
+[xUnit.net 00:00:01.04]         --- End of stack trace from previous location ---
+  Failed Mediator.Tests.ProcessorTests.MultiplePreProcessors_AllExecute [4 ms]
+  Error Message:
+   System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPreProcessor'.
+  Stack Trace:
+     at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs:line 35
+   at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Mediator.cs:line 65
+   at Mediator.Tests.ProcessorTests.MultiplePreProcessors_AllExecute() in C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs:line 145
+--- End of stack trace from previous location ---
+  Passed Mediator.Tests.SendTests.Send_WithDifferentMessages_ReturnsDifferentResponses [19 ms]
+  Passed Mediator.Tests.ValidationTests.ValidationBehavior_WithNoValidators_PassesThrough [3 ms]
+  Failed Mediator.Tests.ProcessorTests.PreProcessor_ExecutesBeforeHandler [4 ms]
+  Error Message:
+   System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPreProcessor'.
+  Stack Trace:
+     at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs:line 35
+   at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Mediator.cs:line 65
+   at Mediator.Tests.ProcessorTests.PreProcessor_ExecutesBeforeHandler() in C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs:line 60
+--- End of stack trace from previous location ---
+  Passed Mediator.Tests.ValidationTests.ValidationBehavior_WithMultipleErrors_ReturnsAllErrors [6 ms]
+  Passed Mediator.Tests.PublishTests.Publish_HandlersReceiveCorrectNotification [86 ms]
+[xUnit.net 00:00:01.09]     Mediator.Tests.ProcessorTests.PreAndPostProcessors_ExecuteInCorrectOrder [FAIL]
+[xUnit.net 00:00:01.09]       System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPostProcessor'.
+[xUnit.net 00:00:01.09]       Stack Trace:
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+[xUnit.net 00:00:01.09]            at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+[xUnit.net 00:00:01.09]            at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+[xUnit.net 00:00:01.09]         C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs(35,0): at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.09]         C:\Data\Libs\Mediator\src\Mediator\Mediator.cs(65,0): at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken)
+[xUnit.net 00:00:01.09]         C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs(116,0): at Mediator.Tests.ProcessorTests.PreAndPostProcessors_ExecuteInCorrectOrder()
+[xUnit.net 00:00:01.09]         --- End of stack trace from previous location ---
+  Failed Mediator.Tests.ProcessorTests.PreAndPostProcessors_ExecuteInCorrectOrder [16 ms]
+  Error Message:
+   System.InvalidOperationException : Unable to resolve service for type 'System.Collections.Generic.List`1[System.String]' while attempting to activate 'Mediator.Tests.ProcessorTests+OrderTrackingPostProcessor'.
+  Stack Trace:
+     at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateOpenGeneric(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot, Boolean throwOnConstraintViolation)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateEnumerable(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Mediator.Wrappers.RequestHandlerWrapper`2.Handle(Object request, IServiceProvider serviceProvider, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Wrappers\RequestHandlerWrapper.cs:line 35
+   at Mediator.Mediator.HandleRequestAsync[TResponse](RequestHandlerBase handler, Object request, CancellationToken cancellationToken) in C:\Data\Libs\Mediator\src\Mediator\Mediator.cs:line 65
+   at Mediator.Tests.ProcessorTests.PreAndPostProcessors_ExecuteInCorrectOrder() in C:\Data\Libs\Mediator\tests\Mediator.Tests\ProcessorTests.cs:line 116
+--- End of stack trace from previous location ---
+  Passed Mediator.Tests.ValidationTests.ValidationBehavior_WithMultipleValidators_RunsAll [32 ms]
+  Passed Mediator.Tests.PublishTests.Publish_WithNullNotification_ThrowsArgumentNullException [21 ms]
+  Passed Mediator.Tests.ValidationTests.ValidationBehavior_WithAlwaysFailingValidator_AlwaysFails [6 ms]
+  Passed Mediator.Tests.SendTests.Send_WithFailingHandler_ThrowsException [47 ms]
+  Passed Mediator.Tests.ValidationTests.ValidationResult_Success_IsValid [2 ms]
+  Passed Mediator.Tests.SendTests.Send_WithCancellationToken_PassesTokenToHandler [2 ms]
+  Passed Mediator.Tests.PublishTests.Publish_WithCancellationToken_PassesToHandlers [14 ms]
+[xUnit.net 00:00:01.10]   Finished:    Mediator.Tests
+  Passed Mediator.Tests.PublishTests.Publish_WithSingleHandler_WorksCorrectly [3 ms]
+  Passed Mediator.Tests.PublishTests.Publish_ConcurrentNotifications_AllHandled [4 ms]
+  Passed Mediator.Tests.PublishTests.Publish_ObjectOverload_WorksCorrectly [3 ms]
+  Passed Mediator.Tests.SendTests.Send_WithVoidRequest_ReturnsUnit [24 ms]
+  Passed Mediator.Tests.SendTests.Send_ObjectOverload_ReturnsCorrectResponse [5 ms]
+  Passed Mediator.Tests.SendTests.Send_MultipleRequests_AllHandledCorrectly [8 ms]
+  Passed Mediator.Tests.SendTests.Send_WithNullRequest_ThrowsArgumentNullException [6 ms]
+  Passed Mediator.Tests.SendTests.Send_WithValidRequest_ReturnsResponse [2 ms]
+
+Test Run Failed.
+Total tests: 58
+     Passed: 53
+     Failed: 5
+ Total time: 3,3337 Seconds
+     1>Project "C:\Data\Libs\Mediator\Mediator.sln" (1) is building "C:\Data\Libs\Mediator\tests\Mediator.Tests\Mediator.Tests.csproj" (4) on node 3 (VSTest target(s)).
+     4>_VSTestConsole:
+         MSB4181: The "VSTestTask" task returned false but did not log an error.
+     4>Done Building Project "C:\Data\Libs\Mediator\tests\Mediator.Tests\Mediator.Tests.csproj" (VSTest target(s)) -- FAILED.
+     1>Done Building Project "C:\Data\Libs\Mediator\Mediator.sln" (VSTest target(s)) -- FAILED.
+
+Build FAILED.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:12.65
