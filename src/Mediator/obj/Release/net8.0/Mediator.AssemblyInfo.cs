@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("High-performance Mediator pattern implementation for .NET with CQRS support")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+680bebd16827e8a2176ed15f9d67859f30cfad6f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Mediator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Mediator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

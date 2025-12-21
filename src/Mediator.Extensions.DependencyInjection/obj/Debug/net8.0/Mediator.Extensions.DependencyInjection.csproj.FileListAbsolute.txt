@@ -13,3 +13,4 @@ C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Debug\net8
 C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Debug\net8.0\refint\Mediator.Extensions.DependencyInjection.dll
 C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Debug\net8.0\Mediator.Extensions.DependencyInjection.pdb
 C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Debug\net8.0\ref\Mediator.Extensions.DependencyInjection.dll
+C:\Data\Libs\Mediator\src\Mediator.Extensions.DependencyInjection\obj\Debug\net8.0\Mediator.Extensions.DependencyInjection.sourcelink.json

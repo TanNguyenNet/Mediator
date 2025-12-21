@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Microsoft.Extensions.DependencyInjection extensions for Mediator")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+680bebd16827e8a2176ed15f9d67859f30cfad6f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Mediator.Extensions.DependencyInjection")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Mediator.Extensions.DependencyInjection")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

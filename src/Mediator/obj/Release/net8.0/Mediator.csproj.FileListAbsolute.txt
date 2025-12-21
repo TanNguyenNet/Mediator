@@ -10,3 +10,4 @@ C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.dll
 C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\refint\Mediator.dll
 C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.pdb
 C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\ref\Mediator.dll
+C:\Data\Libs\Mediator\src\Mediator\obj\Release\net8.0\Mediator.sourcelink.json

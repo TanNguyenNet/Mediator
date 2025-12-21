@@ -118,3 +118,4 @@ C:\Data\Libs\Mediator\tests\Mediator.Tests\obj\Debug\net8.0\refint\Mediator.Test
 C:\Data\Libs\Mediator\tests\Mediator.Tests\obj\Debug\net8.0\Mediator.Tests.pdb
 C:\Data\Libs\Mediator\tests\Mediator.Tests\obj\Debug\net8.0\Mediator.Tests.genruntimeconfig.cache
 C:\Data\Libs\Mediator\tests\Mediator.Tests\obj\Debug\net8.0\ref\Mediator.Tests.dll
+C:\Data\Libs\Mediator\tests\Mediator.Tests\obj\Debug\net8.0\Mediator.Tests.sourcelink.json
