@@ -19,14 +19,14 @@ internal abstract class NotificationHandlerBase
 
 /// <summary>
 /// Wrapper for notification handlers.
-/// Uses ArrayPool to avoid allocations when collecting handlers.
+/// Optimized for minimal allocations using ArrayPool.
 /// </summary>
 /// <typeparam name="TNotification">The type of notification.</typeparam>
 internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHandlerBase
     where TNotification : INotification
 {
-    // Expected max handlers - can grow if needed
-    private const int InitialHandlerCapacity = 8;
+    // Initial capacity for handler array
+    private const int InitialCapacity = 8;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override Task Handle(
@@ -40,6 +40,7 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
     /// <summary>
     /// Handles the strongly-typed notification.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Task Handle(
         TNotification notification,
         IServiceProvider serviceProvider,
@@ -47,49 +48,50 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
     {
         var handlers = serviceProvider.GetServices<INotificationHandler<TNotification>>();
         
-        return PublishToHandlers(notification, handlers, cancellationToken);
+        // Fast path: no handlers
+        if (handlers.Length == 0)
+        {
+            return Task.CompletedTask;
+        }
+
+        // Fast path: single handler - avoid Task.WhenAll overhead
+        if (handlers.Length == 1)
+        {
+            return handlers[0].Handle(notification, cancellationToken);
+        }
+
+        return PublishToMultipleHandlers(notification, handlers, cancellationToken);
     }
 
     /// <summary>
-    /// Publishes to all handlers using parallel execution.
-    /// Uses ArrayPool to minimize allocations.
+    /// Publishes to multiple handlers using ArrayPool for task collection.
     /// </summary>
-    private static async Task PublishToHandlers(
+    private static async Task PublishToMultipleHandlers(
         TNotification notification,
-        IEnumerable<INotificationHandler<TNotification>> handlers,
+        INotificationHandler<TNotification>[] handlers,
         CancellationToken cancellationToken)
     {
-        // Rent an array from pool to collect tasks
-        var taskArray = ArrayPool<Task>.Shared.Rent(InitialHandlerCapacity);
-        var taskList = new List<Task>(InitialHandlerCapacity);
-
+        var handlerCount = handlers.Length;
+        
+        // Rent array from pool for tasks
+        var tasks = ArrayPool<Task>.Shared.Rent(handlerCount);
+        
         try
         {
-            // Collect all handler tasks
-            foreach (var handler in handlers)
+            // Start all handler tasks
+            for (var i = 0; i < handlerCount; i++)
             {
-                taskList.Add(handler.Handle(notification, cancellationToken));
+                tasks[i] = handlers[i].Handle(notification, cancellationToken);
             }
 
-            // Fast path: no handlers
-            if (taskList.Count == 0)
-            {
-                return;
-            }
-
-            // Fast path: single handler
-            if (taskList.Count == 1)
-            {
-                await taskList[0].ConfigureAwait(false);
-                return;
-            }
-
-            // Multiple handlers: await all
-            await Task.WhenAll(taskList).ConfigureAwait(false);
+            // Await all tasks - create span to avoid including extra rented slots
+            await Task.WhenAll(new ArraySegment<Task>(tasks, 0, handlerCount)).ConfigureAwait(false);
         }
         finally
         {
-            ArrayPool<Task>.Shared.Return(taskArray);
+            // Clear and return to pool
+            Array.Clear(tasks, 0, handlerCount);
+            ArrayPool<Task>.Shared.Return(tasks);
         }
     }
 }

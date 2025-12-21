@@ -57,27 +57,39 @@ internal sealed class RequestHandlerWrapper<TRequest, TResponse> : RequestHandle
         // Get pipeline behaviors
         var behaviors = serviceProvider.GetServices<IPipelineBehavior<TRequest, TResponse>>();
 
-        // Build the pipeline
+        // Build the pipeline - optimize: avoid allocation if no behaviors
         return ExecutePipeline(request, handler, behaviors, cancellationToken);
     }
 
     /// <summary>
     /// Executes the pipeline of behaviors and the handler.
+    /// Optimized to avoid Reverse() allocation.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Task<TResponse> ExecutePipeline(
         TRequest request,
         IRequestHandler<TRequest, TResponse> handler,
         IEnumerable<IPipelineBehavior<TRequest, TResponse>> behaviors,
         CancellationToken cancellationToken)
     {
+        // Convert to array once - avoid multiple enumeration and Reverse() allocation
+        var behaviorArray = behaviors as IPipelineBehavior<TRequest, TResponse>[] 
+                           ?? behaviors.ToArray();
+
+        // Fast path: no behaviors - directly call handler
+        if (behaviorArray.Length == 0)
+        {
+            return handler.Handle(request, cancellationToken);
+        }
+
         // Start with the innermost handler
         RequestHandlerDelegate<TResponse> handlerDelegate = () => handler.Handle(request, cancellationToken);
 
-        // Wrap with behaviors in reverse order (so first registered behavior executes first)
-        foreach (var behavior in behaviors.Reverse())
+        // Wrap with behaviors in reverse order using index (no Reverse() allocation)
+        for (var i = behaviorArray.Length - 1; i >= 0; i--)
         {
             var next = handlerDelegate;
-            var currentBehavior = behavior;
+            var currentBehavior = behaviorArray[i];
             handlerDelegate = () => currentBehavior.Handle(request, next, cancellationToken);
         }
 
@@ -93,12 +105,12 @@ internal static class ServiceProviderExtensions
 {
     /// <summary>
     /// Gets all services of the specified type.
-    /// Returns empty enumerable if no services are registered.
+    /// Returns empty array if no services are registered.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> GetServices<T>(this IServiceProvider serviceProvider)
+    public static T[] GetServices<T>(this IServiceProvider serviceProvider)
     {
-        return (IEnumerable<T>?)serviceProvider.GetService(typeof(IEnumerable<T>)) 
-               ?? Enumerable.Empty<T>();
+        var services = (IEnumerable<T>?)serviceProvider.GetService(typeof(IEnumerable<T>));
+        return services as T[] ?? services?.ToArray() ?? Array.Empty<T>();
     }
 }

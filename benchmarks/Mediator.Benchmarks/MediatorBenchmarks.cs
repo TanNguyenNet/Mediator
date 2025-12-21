@@ -28,6 +28,9 @@ public class MediatorBenchmarks
     private OurNotification _ourNotification = null!;
     private MediatRNotification _mediatRNotification = null!;
 
+    [Params(10, 100, 1000)]
+    public int N { get; set; }
+
     [GlobalSetup]
     public void Setup()
     {
@@ -62,70 +65,76 @@ public class MediatorBenchmarks
         (_mediatRProvider as IDisposable)?.Dispose();
     }
 
-    // ===== REQUEST/RESPONSE BENCHMARKS =====
+    // ===== SINGLE REQUEST/RESPONSE BENCHMARKS =====
     
-    [Benchmark(Description = "Our Mediator - Send Request")]
-    public async Task<OurPongResponse> OurMediator_Send()
+    [Benchmark(Description = "Our Mediator - Single Send")]
+    public async Task<OurPongResponse> OurMediator_SingleSend()
     {
         return await _ourMediator.Send(_ourRequest);
     }
 
-    [Benchmark(Baseline = true, Description = "MediatR - Send Request")]
-    public async Task<MediatRPongResponse> MediatR_Send()
+    [Benchmark(Baseline = true, Description = "MediatR - Single Send")]
+    public async Task<MediatRPongResponse> MediatR_SingleSend()
     {
         return await _mediatR.Send(_mediatRRequest);
     }
 
-    // ===== NOTIFICATION BENCHMARKS =====
+    // ===== N SEQUENTIAL REQUESTS BENCHMARKS =====
     
-    [Benchmark(Description = "Our Mediator - Publish Notification")]
-    public async Task OurMediator_Publish()
+    [Benchmark(Description = "Our Mediator - N Requests")]
+    public async Task OurMediator_NRequests()
     {
-        await _ourMediator.Publish(_ourNotification);
-    }
-
-    [Benchmark(Description = "MediatR - Publish Notification")]
-    public async Task MediatR_Publish()
-    {
-        await _mediatR.Publish(_mediatRNotification);
-    }
-
-    // ===== MULTIPLE REQUESTS BENCHMARKS =====
-    
-    [Benchmark(Description = "Our Mediator - 100 Requests")]
-    public async Task OurMediator_100Requests()
-    {
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < N; i++)
         {
             await _ourMediator.Send(new OurPingRequest($"Request {i}"));
         }
     }
 
-    [Benchmark(Description = "MediatR - 100 Requests")]
-    public async Task MediatR_100Requests()
+    [Benchmark(Description = "MediatR - N Requests")]
+    public async Task MediatR_NRequests()
     {
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < N; i++)
         {
             await _mediatR.Send(new MediatRPingRequest($"Request {i}"));
         }
     }
 
-    // ===== CONCURRENT REQUESTS BENCHMARKS =====
+    // ===== N CONCURRENT REQUESTS BENCHMARKS =====
     
-    [Benchmark(Description = "Our Mediator - 100 Concurrent")]
-    public async Task OurMediator_Concurrent()
+    [Benchmark(Description = "Our Mediator - N Concurrent")]
+    public async Task OurMediator_NConcurrent()
     {
-        var tasks = Enumerable.Range(0, 100)
+        var tasks = Enumerable.Range(0, N)
             .Select(i => _ourMediator.Send(new OurPingRequest($"Concurrent {i}")));
         await Task.WhenAll(tasks);
     }
 
-    [Benchmark(Description = "MediatR - 100 Concurrent")]
-    public async Task MediatR_Concurrent()
+    [Benchmark(Description = "MediatR - N Concurrent")]
+    public async Task MediatR_NConcurrent()
     {
-        var tasks = Enumerable.Range(0, 100)
+        var tasks = Enumerable.Range(0, N)
             .Select(i => _mediatR.Send(new MediatRPingRequest($"Concurrent {i}")));
         await Task.WhenAll(tasks);
+    }
+
+    // ===== N NOTIFICATIONS BENCHMARKS =====
+    
+    [Benchmark(Description = "Our Mediator - N Notifications")]
+    public async Task OurMediator_NNotifications()
+    {
+        for (int i = 0; i < N; i++)
+        {
+            await _ourMediator.Publish(new OurNotification($"Notification {i}"));
+        }
+    }
+
+    [Benchmark(Description = "MediatR - N Notifications")]
+    public async Task MediatR_NNotifications()
+    {
+        for (int i = 0; i < N; i++)
+        {
+            await _mediatR.Publish(new MediatRNotification($"Notification {i}"));
+        }
     }
 }
 
