@@ -2,4 +2,5 @@
   <Project Path="src/Mediator.Extensions.DependencyInjection/Mediator.Extensions.DependencyInjection.csproj" />
   <Project Path="src/Mediator/Mediator.csproj" />
   <Project Path="tests/Mediator.Tests/Mediator.Tests.csproj" />
+  <Project Path="benchmarks/Mediator.Benchmarks/Mediator.Benchmarks.csproj" />
 </Solution>

@@ -28,7 +28,7 @@ public class MediatorBenchmarks
     private OurNotification _ourNotification = null!;
     private MediatRNotification _mediatRNotification = null!;
 
-    [Params(10, 100, 1000)]
+    [Params(10, 100)]
     public int N { get; set; }
 
     [GlobalSetup]
