@@ -46,22 +46,8 @@ public sealed class Mediator : IMediator
             static (type, responseType) => CreateRequestHandler(type, responseType),
             typeof(TResponse));
 
-        // Use object-based handling - the wrapper handles the strongly-typed call internally
-        return HandleRequestAsync<TResponse>(handler, request, cancellationToken);
-    }
-
-    /// <summary>
-    /// Helper method to handle request and cast result.
-    /// Uses ValueTask pattern for better performance on sync completion.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private async Task<TResponse> HandleRequestAsync<TResponse>(
-        RequestHandlerBase handler,
-        object request,
-        CancellationToken cancellationToken)
-    {
-        var result = await handler.Handle(request, _serviceProvider, cancellationToken).ConfigureAwait(false);
-        return (TResponse)result!;
+        // Direct typed call - avoids async state machine and boxing
+        return ((ITypedRequestHandler<TResponse>)handler).HandleTyped(request, _serviceProvider, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -111,9 +97,9 @@ public sealed class Mediator : IMediator
     {
         ArgumentNullException.ThrowIfNull(notification);
 
-        var notificationType = notification.GetType();
+        // Use typeof(TNotification) instead of GetType() - faster for generic calls (compile-time type)
         var handler = NotificationHandlerCache.GetOrAdd(
-            notificationType,
+            typeof(TNotification),
             static type => CreateNotificationHandler(type));
 
         return handler.Handle(notification, _serviceProvider, cancellationToken);
@@ -145,7 +131,6 @@ public sealed class Mediator : IMediator
     /// Creates a request handler wrapper for the given request and response types.
     /// This method is only called once per request type due to caching.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static RequestHandlerBase CreateRequestHandler(Type requestType, Type responseType)
     {
         var wrapperType = typeof(RequestHandlerWrapper<,>).MakeGenericType(requestType, responseType);
@@ -156,7 +141,6 @@ public sealed class Mediator : IMediator
     /// Creates a notification handler wrapper for the given notification type.
     /// This method is only called once per notification type due to caching.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static NotificationHandlerBase CreateNotificationHandler(Type notificationType)
     {
         var wrapperType = typeof(NotificationHandlerWrapper<>).MakeGenericType(notificationType);

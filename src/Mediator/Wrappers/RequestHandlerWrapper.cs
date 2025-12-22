@@ -10,6 +10,7 @@ internal abstract class RequestHandlerBase
 {
     /// <summary>
     /// Handles the request and returns the response as Task of object.
+    /// Used for non-generic Send(object) overload.
     /// </summary>
     public abstract Task<object?> Handle(
         object request,
@@ -18,83 +19,111 @@ internal abstract class RequestHandlerBase
 }
 
 /// <summary>
+/// Interface for typed request handling - avoids boxing.
+/// </summary>
+/// <typeparam name="TResponse">The response type.</typeparam>
+internal interface ITypedRequestHandler<TResponse>
+{
+    Task<TResponse> HandleTyped(object request, IServiceProvider serviceProvider, CancellationToken cancellationToken);
+}
+
+/// <summary>
 /// Wrapper for request handlers that handles pipeline behaviors.
 /// Uses static caching to avoid repeated reflection.
 /// </summary>
 /// <typeparam name="TRequest">The type of request.</typeparam>
 /// <typeparam name="TResponse">The type of response.</typeparam>
-internal sealed class RequestHandlerWrapper<TRequest, TResponse> : RequestHandlerBase
+internal sealed class RequestHandlerWrapper<TRequest, TResponse> : RequestHandlerBase, ITypedRequestHandler<TResponse>
     where TRequest : IRequest<TResponse>
 {
+    // Cache service types to avoid repeated typeof() calls in hot path
+    private static readonly Type HandlerServiceType = typeof(IRequestHandler<TRequest, TResponse>);
+
+    /// <summary>
+    /// Typed handler - called from generic Send&lt;TResponse&gt;.
+    /// Avoids boxing the response.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<TResponse> HandleTyped(
+        object request,
+        IServiceProvider serviceProvider,
+        CancellationToken cancellationToken)
+    {
+        return HandleCore((TRequest)request, serviceProvider, cancellationToken);
+    }
+
+    /// <summary>
+    /// Object-based handler - called from non-generic Send(object).
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override async Task<object?> Handle(
         object request,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
-        return await Handle((TRequest)request, serviceProvider, cancellationToken).ConfigureAwait(false);
+        return await HandleCore((TRequest)request, serviceProvider, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
-    /// Handles the strongly-typed request.
+    /// Core handler logic - shared between typed and object-based paths.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task<TResponse> Handle(
+    private static Task<TResponse> HandleCore(
         TRequest request,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
-        // Get the actual handler from DI
-        var handler = (IRequestHandler<TRequest, TResponse>?)serviceProvider.GetService(
-            typeof(IRequestHandler<TRequest, TResponse>));
+        // Get the actual handler from DI using cached type
+        var handler = (IRequestHandler<TRequest, TResponse>?)serviceProvider.GetService(HandlerServiceType);
 
         if (handler is null)
         {
-            throw new InvalidOperationException(
-                $"No handler registered for request type {typeof(TRequest).FullName}");
+            ThrowHandlerNotFound();
         }
 
         // Get pipeline behaviors
         var behaviors = serviceProvider.GetServices<IPipelineBehavior<TRequest, TResponse>>();
 
-        // Build the pipeline - optimize: avoid allocation if no behaviors
-        return ExecutePipeline(request, handler, behaviors, cancellationToken);
+        // Fast path: no behaviors - directly call handler (most common case)
+        if (behaviors.Length == 0)
+        {
+            return handler!.Handle(request, cancellationToken);
+        }
+
+        // Has behaviors - build pipeline
+        return ExecutePipelineWithBehaviors(request, handler!, behaviors, cancellationToken);
     }
 
     /// <summary>
-    /// Executes the pipeline of behaviors and the handler.
-    /// Optimized to avoid Reverse() allocation.
+    /// Executes the pipeline when behaviors exist.
+    /// Separated to keep the fast path small and inlinable.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Task<TResponse> ExecutePipeline(
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static Task<TResponse> ExecutePipelineWithBehaviors(
         TRequest request,
         IRequestHandler<TRequest, TResponse> handler,
-        IEnumerable<IPipelineBehavior<TRequest, TResponse>> behaviors,
+        IPipelineBehavior<TRequest, TResponse>[] behaviors,
         CancellationToken cancellationToken)
     {
-        // Convert to array once - avoid multiple enumeration and Reverse() allocation
-        var behaviorArray = behaviors as IPipelineBehavior<TRequest, TResponse>[] 
-                           ?? behaviors.ToArray();
+        // Build pipeline from innermost to outermost
+        RequestHandlerDelegate<TResponse> next = () => handler.Handle(request, cancellationToken);
 
-        // Fast path: no behaviors - directly call handler
-        if (behaviorArray.Length == 0)
+        // Wrap in reverse order
+        for (var i = behaviors.Length - 1; i >= 0; i--)
         {
-            return handler.Handle(request, cancellationToken);
+            var behavior = behaviors[i];
+            var currentNext = next;
+            next = () => behavior.Handle(request, currentNext, cancellationToken);
         }
 
-        // Start with the innermost handler
-        RequestHandlerDelegate<TResponse> handlerDelegate = () => handler.Handle(request, cancellationToken);
+        return next();
+    }
 
-        // Wrap with behaviors in reverse order using index (no Reverse() allocation)
-        for (var i = behaviorArray.Length - 1; i >= 0; i--)
-        {
-            var next = handlerDelegate;
-            var currentBehavior = behaviorArray[i];
-            handlerDelegate = () => currentBehavior.Handle(request, next, cancellationToken);
-        }
-
-        // Execute the pipeline
-        return handlerDelegate();
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void ThrowHandlerNotFound()
+    {
+        throw new InvalidOperationException(
+            $"No handler registered for request type {typeof(TRequest).FullName}");
     }
 }
 

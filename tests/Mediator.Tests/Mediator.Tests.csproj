@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Mediator\Mediator.csproj" />
-    <ProjectReference Include="..\..\src\Mediator.Extensions.DependencyInjection\Mediator.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

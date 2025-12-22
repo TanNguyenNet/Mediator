@@ -12,7 +12,7 @@ namespace Mediator.Benchmarks;
 /// Benchmarks comparing our Mediator library with MediatR.
 /// </summary>
 [MemoryDiagnoser]
-[Orderer(SummaryOrderPolicy.FastestToSlowest)]
+[Orderer(SummaryOrderPolicy.Default)]
 [RankColumn]
 public class MediatorBenchmarks
 {

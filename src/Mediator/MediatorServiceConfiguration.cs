@@ -58,6 +58,18 @@ public sealed class MediatorServiceConfiguration
         return this;
     }
 
+
+    /// <summary>
+    /// Adds an assemblies to scan for handlers.
+    /// </summary>
+    /// <param name="assembly">The assembly to scan.</param>
+    /// <returns>The configuration for chaining.</returns>
+    public MediatorServiceConfiguration AddAssembly(params System.Reflection.Assembly[] assembly)
+    {
+        assembly.ToList().ForEach(a => AssembliesToScan.Add(a));
+        return this;
+    }
+
     /// <summary>
     /// Adds a pipeline behavior type.
     /// </summary>

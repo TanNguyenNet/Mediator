@@ -25,29 +25,26 @@ internal abstract class NotificationHandlerBase
 internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHandlerBase
     where TNotification : INotification
 {
-    // Initial capacity for handler array
-    private const int InitialCapacity = 8;
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override Task Handle(
         object notification,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
-        return Handle((TNotification)notification, serviceProvider, cancellationToken);
+        return HandleCore((TNotification)notification, serviceProvider, cancellationToken);
     }
 
     /// <summary>
     /// Handles the strongly-typed notification.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task Handle(
+    private static Task HandleCore(
         TNotification notification,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
         var handlers = serviceProvider.GetServices<INotificationHandler<TNotification>>();
-        
+
         // Fast path: no handlers
         if (handlers.Length == 0)
         {
@@ -60,22 +57,32 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
             return handlers[0].Handle(notification, cancellationToken);
         }
 
+        // Fast path: two handlers - common case, avoid array allocation
+        if (handlers.Length == 2)
+        {
+            return Task.WhenAll(
+                handlers[0].Handle(notification, cancellationToken),
+                handlers[1].Handle(notification, cancellationToken));
+        }
+
+        // Multiple handlers (3+)
         return PublishToMultipleHandlers(notification, handlers, cancellationToken);
     }
 
     /// <summary>
-    /// Publishes to multiple handlers using ArrayPool for task collection.
+    /// Publishes to multiple handlers (3+) using ArrayPool for task collection.
     /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private static async Task PublishToMultipleHandlers(
         TNotification notification,
         INotificationHandler<TNotification>[] handlers,
         CancellationToken cancellationToken)
     {
         var handlerCount = handlers.Length;
-        
+
         // Rent array from pool for tasks
         var tasks = ArrayPool<Task>.Shared.Rent(handlerCount);
-        
+
         try
         {
             // Start all handler tasks
@@ -84,13 +91,12 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
                 tasks[i] = handlers[i].Handle(notification, cancellationToken);
             }
 
-            // Await all tasks - create span to avoid including extra rented slots
+            // Await all tasks - use ArraySegment to avoid extra allocation
             await Task.WhenAll(new ArraySegment<Task>(tasks, 0, handlerCount)).ConfigureAwait(false);
         }
         finally
         {
-            // Clear and return to pool
-            Array.Clear(tasks, 0, handlerCount);
+            // Return to pool
             ArrayPool<Task>.Shared.Return(tasks);
         }
     }
