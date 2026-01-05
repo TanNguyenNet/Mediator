@@ -1,4 +1,5 @@
 using System.Reflection;
+using Mediator.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -89,8 +90,12 @@ public static class ServiceCollectionExtensions
         Assembly assembly,
         MediatorServiceConfiguration config)
     {
-        var handlerTypes = assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false, IsGenericTypeDefinition: false, IsNested: false })
+        var allTypes = assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false, IsNested: false })
+            .ToList();
+
+        var handlerTypes = allTypes
+            .Where(t => !t.IsGenericTypeDefinition)
             .ToList();
 
         foreach (var handlerType in handlerTypes)
@@ -103,9 +108,27 @@ public static class ServiceCollectionExtensions
 
             // Register IStreamRequestHandler<TRequest, TResponse>
             RegisterStreamRequestHandlers(services, handlerType, config);
+        }
 
-            // Note: Pre/Post Processors are NOT auto-registered.
-            // Users should register them explicitly via services.AddTransient<>()
+        var registerPreProcessors = HasBehavior(config, typeof(RequestPreProcessorBehavior<,>));
+        var registerPostProcessors = HasBehavior(config, typeof(RequestPostProcessorBehavior<,>));
+
+        if (!registerPreProcessors && !registerPostProcessors)
+        {
+            return;
+        }
+
+        foreach (var processorType in allTypes)
+        {
+            if (registerPreProcessors)
+            {
+                RegisterPreProcessors(services, processorType, config);
+            }
+
+            if (registerPostProcessors)
+            {
+                RegisterPostProcessors(services, processorType, config);
+            }
         }
     }
 
@@ -220,8 +243,12 @@ public static class ServiceCollectionExtensions
 
         foreach (var @interface in interfaces)
         {
-            // Multiple pre-processors allowed
-            services.Add(new ServiceDescriptor(@interface, handlerType, config.HandlerLifetime));
+            var serviceType = handlerType.IsGenericTypeDefinition
+                ? @interface.GetGenericTypeDefinition()
+                : @interface;
+
+            // Multiple pre-processors allowed; avoid duplicate registrations
+            services.TryAddEnumerable(new ServiceDescriptor(serviceType, handlerType, config.HandlerLifetime));
         }
     }
 
@@ -240,8 +267,31 @@ public static class ServiceCollectionExtensions
 
         foreach (var @interface in interfaces)
         {
-            // Multiple post-processors allowed
-            services.Add(new ServiceDescriptor(@interface, handlerType, config.HandlerLifetime));
+            var serviceType = handlerType.IsGenericTypeDefinition
+                ? @interface.GetGenericTypeDefinition()
+                : @interface;
+
+            // Multiple post-processors allowed; avoid duplicate registrations
+            services.TryAddEnumerable(new ServiceDescriptor(serviceType, handlerType, config.HandlerLifetime));
         }
+    }
+
+    private static bool HasBehavior(MediatorServiceConfiguration config, Type openGenericBehaviorType)
+    {
+        foreach (var behaviorType in config.BehaviorTypes)
+        {
+            if (behaviorType == openGenericBehaviorType)
+            {
+                return true;
+            }
+
+            if (behaviorType.IsGenericType &&
+                behaviorType.GetGenericTypeDefinition() == openGenericBehaviorType)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

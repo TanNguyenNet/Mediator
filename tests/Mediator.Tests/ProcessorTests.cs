@@ -32,10 +32,6 @@ public class ProcessorTests : IDisposable
             config.AddBehavior(typeof(RequestPostProcessorBehavior<,>));
         });
 
-        // Register processors
-        services.AddTransient(typeof(IRequestPreProcessor<>), typeof(TrackingPreProcessor<>));
-        services.AddTransient(typeof(IRequestPostProcessor<,>), typeof(TrackingPostProcessor<,>));
-
         _serviceProvider = services.BuildServiceProvider();
         return _serviceProvider.GetRequiredService<IMediator>();
     }
@@ -50,8 +46,6 @@ public class ProcessorTests : IDisposable
             config.AddAssembly(typeof(ProcessorTests).Assembly);
             config.AddBehavior(typeof(RequestPreProcessorBehavior<,>));
         });
-        services.AddTransient<IRequestPreProcessor<PingRequest>, PingPreProcessor>();
-
         _serviceProvider = services.BuildServiceProvider();
         var mediator = _serviceProvider.GetRequiredService<IMediator>();
         PingPreProcessor.Reset();
@@ -74,8 +68,6 @@ public class ProcessorTests : IDisposable
             config.AddAssembly(typeof(ProcessorTests).Assembly);
             config.AddBehavior(typeof(RequestPostProcessorBehavior<,>));
         });
-        services.AddTransient<IRequestPostProcessor<PingRequest, PongResponse>, PingPostProcessor>();
-
         _serviceProvider = services.BuildServiceProvider();
         var mediator = _serviceProvider.GetRequiredService<IMediator>();
         PingPostProcessor.Reset();
@@ -103,7 +95,7 @@ public class ProcessorTests : IDisposable
             config.AddBehavior(typeof(RequestPostProcessorBehavior<,>));
         });
 
-        // Custom processors that track order
+        // Custom processors that track order (not auto-registered because they are nested types)
         services.AddTransient<IRequestPreProcessor<PingRequest>>(sp =>
             new OrderTrackingPreProcessor(executionOrder));
         services.AddTransient<IRequestPostProcessor<PingRequest, PongResponse>>(sp =>
@@ -131,10 +123,6 @@ public class ProcessorTests : IDisposable
             config.AddAssembly(typeof(ProcessorTests).Assembly);
             config.AddBehavior(typeof(RequestPreProcessorBehavior<,>));
         });
-
-        // Register multiple pre-processors
-        services.AddTransient<IRequestPreProcessor<PingRequest>, PingPreProcessor>();
-        services.AddTransient<IRequestPreProcessor<PingRequest>, AnotherPingPreProcessor>();
 
         _serviceProvider = services.BuildServiceProvider();
         var mediator = _serviceProvider.GetRequiredService<IMediator>();
