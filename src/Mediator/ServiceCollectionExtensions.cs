@@ -10,6 +10,18 @@ namespace Mediator;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+    private static readonly Type[] HandlerInterfaceTypes =
+    [
+        typeof(IRequestHandler<,>),
+        typeof(INotificationHandler<>),
+        typeof(IStreamRequestHandler<,>)
+    ];
+
+    private static readonly Type[] MultipleRegistrationTypes =
+    [
+        typeof(INotificationHandler<>)
+    ];
+
     /// <summary>
     /// Adds Mediator services to the specified IServiceCollection.
     /// Scans the provided assemblies for handlers.
@@ -40,258 +52,182 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Action<MediatorServiceConfiguration> configure)
     {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configure);
+
         var config = new MediatorServiceConfiguration();
         configure(config);
 
-        // Register IMediator, ISender, IPublisher
-        RegisterMediator(services, config);
-
-        // Scan assemblies and register handlers
-        foreach (var assembly in config.AssembliesToScan)
-        {
-            RegisterHandlersFromAssembly(services, assembly, config);
-        }
-
-        // Register behaviors
-        RegisterBehaviors(services, config);
-
-        return services;
+        return services
+            .RegisterMediator(config)
+            .RegisterAllHandlers(config)
+            .RegisterAllProcessors(config)
+            .RegisterBehaviors(config);
     }
 
-    /// <summary>
-    /// Registers the Mediator service.
-    /// </summary>
-    private static void RegisterMediator(IServiceCollection services, MediatorServiceConfiguration config)
+    private static IServiceCollection RegisterMediator(
+        this IServiceCollection services,
+        MediatorServiceConfiguration config)
     {
         var lifetime = config.MediatorLifetime;
         var implementationType = config.MediatorImplementationType;
 
-        // Register IMediator
         services.TryAdd(new ServiceDescriptor(typeof(IMediator), implementationType, lifetime));
+        services.TryAdd(ServiceDescriptor.Describe(typeof(ISender), sp => sp.GetRequiredService<IMediator>(), lifetime));
+        services.TryAdd(ServiceDescriptor.Describe(typeof(IPublisher), sp => sp.GetRequiredService<IMediator>(), lifetime));
 
-        // Register ISender pointing to IMediator
-        services.TryAdd(new ServiceDescriptor(
-            typeof(ISender),
-            sp => sp.GetRequiredService<IMediator>(),
-            lifetime));
-
-        // Register IPublisher pointing to IMediator
-        services.TryAdd(new ServiceDescriptor(
-            typeof(IPublisher),
-            sp => sp.GetRequiredService<IMediator>(),
-            lifetime));
+        return services;
     }
 
-    /// <summary>
-    /// Registers handlers from an assembly.
-    /// </summary>
-    private static void RegisterHandlersFromAssembly(
-        IServiceCollection services,
-        Assembly assembly,
+    private static IServiceCollection RegisterAllHandlers(
+        this IServiceCollection services,
         MediatorServiceConfiguration config)
     {
-        var allTypes = assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false, IsNested: false })
-            .ToList();
-
-        var handlerTypes = allTypes
+        var concreteTypes = config.AssembliesToScan
+            .SelectMany(GetConcreteTypes)
             .Where(t => !t.IsGenericTypeDefinition)
             .ToList();
 
-        foreach (var handlerType in handlerTypes)
+        foreach (var handlerType in concreteTypes)
         {
-            // Register IRequestHandler<TRequest, TResponse>
-            RegisterRequestHandlers(services, handlerType, config);
-
-            // Register INotificationHandler<TNotification>
-            RegisterNotificationHandlers(services, handlerType, config);
-
-            // Register IStreamRequestHandler<TRequest, TResponse>
-            RegisterStreamRequestHandlers(services, handlerType, config);
+            services.RegisterHandlerInterfaces(handlerType, config.HandlerLifetime);
         }
 
-        var registerPreProcessors = HasBehavior(config, typeof(RequestPreProcessorBehavior<,>));
-        var registerPostProcessors = HasBehavior(config, typeof(RequestPostProcessorBehavior<,>));
+        return services;
+    }
 
-        if (!registerPreProcessors && !registerPostProcessors)
+    private static IServiceCollection RegisterAllProcessors(
+        this IServiceCollection services,
+        MediatorServiceConfiguration config)
+    {
+        var processorRegistrations = new (Type BehaviorType, Type ProcessorInterface)[]
         {
-            return;
-        }
+            (typeof(RequestPreProcessorBehavior<,>), typeof(IRequestPreProcessor<>)),
+            (typeof(RequestPostProcessorBehavior<,>), typeof(IRequestPostProcessor<,>))
+        };
 
-        foreach (var processorType in allTypes)
+        var concreteTypes = config.AssembliesToScan
+            .SelectMany(GetConcreteTypes)
+            .ToList();
+
+        foreach (var (behaviorType, processorInterface) in processorRegistrations)
         {
-            if (registerPreProcessors)
+            if (!config.HasBehavior(behaviorType))
             {
-                RegisterPreProcessors(services, processorType, config);
+                continue;
             }
 
-            if (registerPostProcessors)
+            foreach (var processorType in concreteTypes)
             {
-                RegisterPostProcessors(services, processorType, config);
+                services.RegisterProcessorInterfaces(processorType, processorInterface, config.HandlerLifetime);
             }
         }
+
+        return services;
     }
 
-    /// <summary>
-    /// Registers request handlers.
-    /// </summary>
-    private static void RegisterRequestHandlers(
-        IServiceCollection services,
-        Type handlerType,
-        MediatorServiceConfiguration config)
-    {
-        var interfaces = handlerType.GetInterfaces()
-            .Where(i => i.IsGenericType)
-            .Where(i => i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))
-            .ToList();
-
-        foreach (var @interface in interfaces)
-        {
-            services.TryAdd(new ServiceDescriptor(@interface, handlerType, config.HandlerLifetime));
-        }
-    }
-
-    /// <summary>
-    /// Registers notification handlers.
-    /// </summary>
-    private static void RegisterNotificationHandlers(
-        IServiceCollection services,
-        Type handlerType,
-        MediatorServiceConfiguration config)
-    {
-        var interfaces = handlerType.GetInterfaces()
-            .Where(i => i.IsGenericType)
-            .Where(i => i.GetGenericTypeDefinition() == typeof(INotificationHandler<>))
-            .ToList();
-
-        foreach (var @interface in interfaces)
-        {
-            // Use Add instead of TryAdd for notifications (multiple handlers allowed)
-            services.Add(new ServiceDescriptor(@interface, handlerType, config.HandlerLifetime));
-        }
-    }
-
-    /// <summary>
-    /// Registers stream request handlers.
-    /// </summary>
-    private static void RegisterStreamRequestHandlers(
-        IServiceCollection services,
-        Type handlerType,
-        MediatorServiceConfiguration config)
-    {
-        var interfaces = handlerType.GetInterfaces()
-            .Where(i => i.IsGenericType)
-            .Where(i => i.GetGenericTypeDefinition() == typeof(IStreamRequestHandler<,>))
-            .ToList();
-
-        foreach (var @interface in interfaces)
-        {
-            services.TryAdd(new ServiceDescriptor(@interface, handlerType, config.HandlerLifetime));
-        }
-    }
-
-    /// <summary>
-    /// Registers pipeline behaviors.
-    /// </summary>
-    private static void RegisterBehaviors(
-        IServiceCollection services,
+    private static IServiceCollection RegisterBehaviors(
+        this IServiceCollection services,
         MediatorServiceConfiguration config)
     {
         foreach (var behaviorType in config.BehaviorTypes)
         {
-            if (behaviorType.IsGenericTypeDefinition)
+            var (serviceType, implType) = ResolveBehaviorTypes(behaviorType, config);
+
+            if (serviceType is not null)
             {
-                // Open generic behavior
-                if (config.RegisterGenericBehaviors)
-                {
-                    services.Add(new ServiceDescriptor(
-                        typeof(IPipelineBehavior<,>),
-                        behaviorType,
-                        config.BehaviorLifetime));
-                }
+                services.Add(new ServiceDescriptor(serviceType, implType, config.BehaviorLifetime));
+            }
+        }
+
+        return services;
+    }
+
+    private static (Type? ServiceType, Type ImplementationType) ResolveBehaviorTypes(
+        Type behaviorType,
+        MediatorServiceConfiguration config)
+    {
+        if (behaviorType.IsGenericTypeDefinition)
+        {
+            return config.RegisterGenericBehaviors
+                ? (typeof(IPipelineBehavior<,>), behaviorType)
+                : (null, behaviorType);
+        }
+
+        var pipelineInterface = behaviorType
+            .GetInterfaces()
+            .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>));
+
+        return (pipelineInterface, behaviorType);
+    }
+
+    private static void RegisterHandlerInterfaces(
+        this IServiceCollection services,
+        Type handlerType,
+        ServiceLifetime lifetime)
+    {
+        foreach (var interfaceType in HandlerInterfaceTypes)
+        {
+            var allowMultiple = MultipleRegistrationTypes.Contains(interfaceType);
+            services.RegisterInterfaces(handlerType, interfaceType, lifetime, allowMultiple);
+        }
+    }
+
+    private static void RegisterInterfaces(
+        this IServiceCollection services,
+        Type implementationType,
+        Type openGenericInterface,
+        ServiceLifetime lifetime,
+        bool allowMultiple)
+    {
+        foreach (var serviceType in implementationType.GetGenericInterfaces(openGenericInterface))
+        {
+            var descriptor = new ServiceDescriptor(serviceType, implementationType, lifetime);
+
+            if (allowMultiple)
+            {
+                services.Add(descriptor);
             }
             else
             {
-                // Closed generic behavior - find the IPipelineBehavior interface
-                var pipelineInterface = behaviorType.GetInterfaces()
-                    .FirstOrDefault(i => i.IsGenericType &&
-                                         i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>));
-
-                if (pipelineInterface is not null)
-                {
-                    services.Add(new ServiceDescriptor(
-                        pipelineInterface,
-                        behaviorType,
-                        config.BehaviorLifetime));
-                }
+                services.TryAdd(descriptor);
             }
         }
     }
 
-    /// <summary>
-    /// Registers request pre-processors.
-    /// </summary>
-    private static void RegisterPreProcessors(
-        IServiceCollection services,
-        Type handlerType,
-        MediatorServiceConfiguration config)
+    private static void RegisterProcessorInterfaces(
+        this IServiceCollection services,
+        Type processorType,
+        Type openGenericInterface,
+        ServiceLifetime lifetime)
     {
-        var interfaces = handlerType.GetInterfaces()
-            .Where(i => i.IsGenericType)
-            .Where(i => i.GetGenericTypeDefinition() == typeof(IRequestPreProcessor<>))
-            .ToList();
-
-        foreach (var @interface in interfaces)
+        foreach (var serviceType in processorType.GetGenericInterfaces(openGenericInterface))
         {
-            var serviceType = handlerType.IsGenericTypeDefinition
-                ? @interface.GetGenericTypeDefinition()
-                : @interface;
+            var registrationType = processorType.IsGenericTypeDefinition
+                ? serviceType.GetGenericTypeDefinition()
+                : serviceType;
 
-            // Multiple pre-processors allowed; avoid duplicate registrations
-            services.TryAddEnumerable(new ServiceDescriptor(serviceType, handlerType, config.HandlerLifetime));
+            services.TryAddEnumerable(new ServiceDescriptor(registrationType, processorType, lifetime));
         }
     }
 
-    /// <summary>
-    /// Registers request post-processors.
-    /// </summary>
-    private static void RegisterPostProcessors(
-        IServiceCollection services,
-        Type handlerType,
-        MediatorServiceConfiguration config)
+    private static IEnumerable<Type> GetConcreteTypes(Assembly assembly)
     {
-        var interfaces = handlerType.GetInterfaces()
-            .Where(i => i.IsGenericType)
-            .Where(i => i.GetGenericTypeDefinition() == typeof(IRequestPostProcessor<,>))
-            .ToList();
-
-        foreach (var @interface in interfaces)
-        {
-            var serviceType = handlerType.IsGenericTypeDefinition
-                ? @interface.GetGenericTypeDefinition()
-                : @interface;
-
-            // Multiple post-processors allowed; avoid duplicate registrations
-            services.TryAddEnumerable(new ServiceDescriptor(serviceType, handlerType, config.HandlerLifetime));
-        }
+        return assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false, IsNested: false });
     }
 
-    private static bool HasBehavior(MediatorServiceConfiguration config, Type openGenericBehaviorType)
+    private static IEnumerable<Type> GetGenericInterfaces(this Type implementationType, Type openGenericInterface)
     {
-        foreach (var behaviorType in config.BehaviorTypes)
-        {
-            if (behaviorType == openGenericBehaviorType)
-            {
-                return true;
-            }
+        return implementationType
+            .GetInterfaces()
+            .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == openGenericInterface);
+    }
 
-            if (behaviorType.IsGenericType &&
-                behaviorType.GetGenericTypeDefinition() == openGenericBehaviorType)
-            {
-                return true;
-            }
-        }
-
-        return false;
+    private static bool HasBehavior(this MediatorServiceConfiguration config, Type openGenericBehaviorType)
+    {
+        return config.BehaviorTypes.Any(bt =>
+            bt == openGenericBehaviorType ||
+            (bt.IsGenericType && bt.GetGenericTypeDefinition() == openGenericBehaviorType));
     }
 }
