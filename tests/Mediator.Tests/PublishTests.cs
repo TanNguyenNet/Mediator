@@ -28,6 +28,7 @@ public class PublishTests : IDisposable
         UserCreatedHandler1.Reset();
         UserCreatedHandler2.Reset();
         OrderPlacedHandler.Reset();
+        CreateOrderEventHandler.Reset();
     }
 
     public void Dispose()
@@ -172,5 +173,35 @@ public class PublishTests : IDisposable
 
         // Assert - Should complete without throwing
         await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    public async Task Publish_WithInheritance_InvokesDerivedTypeHandler()
+    {
+        // Arrange - CreateOrderEvent inherits from DomainEventBase
+        DomainEventBase domainEvent = new CreateOrderEvent(123, "John Doe");
+        CreateOrderEventHandler.Reset();
+
+        // Act - Publish using base class reference
+        await _mediator.Publish(domainEvent);
+
+        // Assert - Handler for CreateOrderEvent should be invoked, not DomainEventBase
+        CreateOrderEventHandler.HandleCount.Should().Be(1);
+        CreateOrderEventHandler.ReceivedEvents.Should().ContainSingle()
+            .Which.Should().BeEquivalentTo(new CreateOrderEvent(123, "John Doe"));
+    }
+
+    [Fact]
+    public async Task Publish_WithInheritance_ObjectOverload_InvokesDerivedTypeHandler()
+    {
+        // Arrange
+        object domainEvent = new CreateOrderEvent(456, "Jane Doe");
+        CreateOrderEventHandler.Reset();
+
+        // Act
+        await _mediator.Publish(domainEvent);
+
+        // Assert
+        CreateOrderEventHandler.HandleCount.Should().Be(1);
     }
 }

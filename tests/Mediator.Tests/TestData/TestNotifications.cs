@@ -78,3 +78,37 @@ public class OrderPlacedHandler : INotificationHandler<OrderPlacedNotification>
 /// Notification with no handlers for testing edge cases.
 /// </summary>
 public record OrphanNotification(string Message) : INotification;
+
+// ========== DOMAIN EVENT INHERITANCE TESTS ==========
+
+/// <summary>
+/// Base class for domain events to test inheritance scenarios.
+/// </summary>
+public abstract record DomainEventBase : INotification;
+
+/// <summary>
+/// Concrete domain event for testing inheritance with Publish.
+/// </summary>
+public record CreateOrderEvent(int OrderId, string CustomerName) : DomainEventBase;
+
+/// <summary>
+/// Handler for CreateOrderEvent to test inheritance scenario.
+/// </summary>
+public class CreateOrderEventHandler : INotificationHandler<CreateOrderEvent>
+{
+    public static int HandleCount { get; private set; }
+    public static List<CreateOrderEvent> ReceivedEvents { get; } = new();
+
+    public Task Handle(CreateOrderEvent notification, CancellationToken cancellationToken)
+    {
+        HandleCount++;
+        ReceivedEvents.Add(notification);
+        return Task.CompletedTask;
+    }
+
+    public static void Reset()
+    {
+        HandleCount = 0;
+        ReceivedEvents.Clear();
+    }
+}

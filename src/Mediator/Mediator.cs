@@ -97,9 +97,9 @@ public sealed class Mediator : IMediator
     {
         ArgumentNullException.ThrowIfNull(notification);
 
-        // Use typeof(TNotification) instead of GetType() - faster for generic calls (compile-time type)
+        // Use GetType() to get runtime type - supports inheritance scenarios (e.g., DomainEventBase -> CreateOrderEvent)
         var handler = NotificationHandlerCache.GetOrAdd(
-            typeof(TNotification),
+            notification.GetType(),
             static type => CreateNotificationHandler(type));
 
         return handler.Handle(notification, _serviceProvider, cancellationToken);
