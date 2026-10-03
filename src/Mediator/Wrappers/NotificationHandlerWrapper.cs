@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Runtime.CompilerServices;
 
 namespace Mediator.Wrappers;
@@ -19,7 +18,7 @@ internal abstract class NotificationHandlerBase
 
 /// <summary>
 /// Wrapper for notification handlers.
-/// Optimized for minimal allocations using ArrayPool.
+/// Optimized for minimal allocations.
 /// </summary>
 /// <typeparam name="TNotification">The type of notification.</typeparam>
 internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHandlerBase
@@ -70,34 +69,22 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
     }
 
     /// <summary>
-    /// Publishes to multiple handlers (3+) using ArrayPool for task collection.
+    /// Publishes to multiple handlers (3+).
     /// </summary>
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static async Task PublishToMultipleHandlers(
+    private static Task PublishToMultipleHandlers(
         TNotification notification,
         INotificationHandler<TNotification>[] handlers,
         CancellationToken cancellationToken)
     {
-        var handlerCount = handlers.Length;
+        var tasks = new Task[handlers.Length];
 
-        // Rent array from pool for tasks
-        var tasks = ArrayPool<Task>.Shared.Rent(handlerCount);
-
-        try
+        for (var i = 0; i < tasks.Length; i++)
         {
-            // Start all handler tasks
-            for (var i = 0; i < handlerCount; i++)
-            {
-                tasks[i] = handlers[i].Handle(notification, cancellationToken);
-            }
+            tasks[i] = handlers[i].Handle(notification, cancellationToken);
+        }
 
-            // Await all tasks - span overload avoids enumerator allocation
-            await Task.WhenAll(new ReadOnlySpan<Task>(tasks, 0, handlerCount)).ConfigureAwait(false);
-        }
-        finally
-        {
-            // Return to pool
-            ArrayPool<Task>.Shared.Return(tasks);
-        }
+        // Exact Task[] overload: not ambiguous, no copy, no async state machine
+        return Task.WhenAll(tasks);
     }
 }

@@ -71,6 +71,20 @@ public class PublishTests : IDisposable
     }
 
     [Fact]
+    public async Task Publish_WithThreeOrMoreHandlers_NotifiesAllHandlers()
+    {
+        // Arrange
+        BroadcastHandlerBase.Reset();
+
+        // Act
+        await _mediator.Publish(new BroadcastNotification(1));
+
+        // Assert
+        BroadcastHandlerBase.Calls.Should().BeEquivalentTo(
+            [nameof(BroadcastHandlerA), nameof(BroadcastHandlerB), nameof(BroadcastHandlerC)]);
+    }
+
+    [Fact]
     public async Task Publish_WithSingleHandler_WorksCorrectly()
     {
         // Arrange

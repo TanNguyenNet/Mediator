@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 namespace Mediator.Tests.TestData;
 
 // ========== NOTIFICATIONS ==========
@@ -73,6 +75,35 @@ public class OrderPlacedHandler : INotificationHandler<OrderPlacedNotification>
 
     public static void Reset() => HandleCount = 0;
 }
+
+// ========== MULTIPLE (3+) HANDLERS ==========
+
+/// <summary>
+/// Notification with three handlers to exercise the 3+ handler publish path.
+/// </summary>
+public record BroadcastNotification(int Id) : INotification;
+
+/// <summary>
+/// Shared base for BroadcastNotification handlers; completes asynchronously so Task.WhenAll awaits pending tasks.
+/// </summary>
+public abstract class BroadcastHandlerBase : INotificationHandler<BroadcastNotification>
+{
+    public static ConcurrentBag<string> Calls { get; } = [];
+
+    public async Task Handle(BroadcastNotification notification, CancellationToken cancellationToken)
+    {
+        await Task.Yield();
+        Calls.Add(GetType().Name);
+    }
+
+    public static void Reset() => Calls.Clear();
+}
+
+public class BroadcastHandlerA : BroadcastHandlerBase;
+
+public class BroadcastHandlerB : BroadcastHandlerBase;
+
+public class BroadcastHandlerC : BroadcastHandlerBase;
 
 /// <summary>
 /// Notification with no handlers for testing edge cases.
