@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Runtime.CompilerServices;
 
 namespace Mediator.Wrappers;
@@ -18,7 +19,7 @@ internal abstract class NotificationHandlerBase
 
 /// <summary>
 /// Wrapper for notification handlers.
-/// Optimized for minimal allocations.
+/// Optimized for minimal allocations using ArrayPool.
 /// </summary>
 /// <typeparam name="TNotification">The type of notification.</typeparam>
 internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHandlerBase
@@ -69,7 +70,8 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
     }
 
     /// <summary>
-    /// Publishes to multiple handlers (3+).
+    /// Publishes to multiple handlers (3+) using ArrayPool for task collection.
+    /// Zero allocation when every handler completes synchronously.
     /// </summary>
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static Task PublishToMultipleHandlers(
@@ -77,14 +79,33 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
         INotificationHandler<TNotification>[] handlers,
         CancellationToken cancellationToken)
     {
-        var tasks = new Task[handlers.Length];
+        var handlerCount = handlers.Length;
+        var tasks = ArrayPool<Task>.Shared.Rent(handlerCount);
 
-        for (var i = 0; i < tasks.Length; i++)
+        try
         {
-            tasks[i] = handlers[i].Handle(notification, cancellationToken);
-        }
+            var allCompletedSuccessfully = true;
 
-        // Exact Task[] overload: not ambiguous, no copy, no async state machine
-        return Task.WhenAll(tasks);
+            for (var i = 0; i < handlerCount; i++)
+            {
+                var task = handlers[i].Handle(notification, cancellationToken);
+                tasks[i] = task;
+                allCompletedSuccessfully &= task.IsCompletedSuccessfully;
+            }
+
+            if (allCompletedSuccessfully)
+            {
+                return Task.CompletedTask;
+            }
+
+            // WhenAll(ReadOnlySpan) does not keep the span, so the array can be returned to the pool right after
+            return Task.WhenAll(new ReadOnlySpan<Task>(tasks, 0, handlerCount));
+        }
+        finally
+        {
+            // Clear so the pool does not keep completed tasks alive
+            Array.Clear(tasks, 0, handlerCount);
+            ArrayPool<Task>.Shared.Return(tasks);
+        }
     }
 }

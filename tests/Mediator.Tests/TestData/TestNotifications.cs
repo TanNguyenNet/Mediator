@@ -106,6 +106,61 @@ public class BroadcastHandlerB : BroadcastHandlerBase;
 public class BroadcastHandlerC : BroadcastHandlerBase;
 
 /// <summary>
+/// Notification with three synchronously completing handlers (3+ handler fast path).
+/// </summary>
+public record SyncBroadcastNotification(int Id) : INotification;
+
+public abstract class SyncBroadcastHandlerBase : INotificationHandler<SyncBroadcastNotification>
+{
+    public static ConcurrentBag<string> Calls { get; } = [];
+
+    public Task Handle(SyncBroadcastNotification notification, CancellationToken cancellationToken)
+    {
+        Calls.Add(GetType().Name);
+        return Task.CompletedTask;
+    }
+
+    public static void Reset() => Calls.Clear();
+}
+
+public class SyncBroadcastHandlerA : SyncBroadcastHandlerBase;
+
+public class SyncBroadcastHandlerB : SyncBroadcastHandlerBase;
+
+public class SyncBroadcastHandlerC : SyncBroadcastHandlerBase;
+
+/// <summary>
+/// Notification with three handlers where one faults asynchronously.
+/// </summary>
+public record FaultingBroadcastNotification(int Id) : INotification;
+
+public class FaultingBroadcastHandler : INotificationHandler<FaultingBroadcastNotification>
+{
+    public async Task Handle(FaultingBroadcastNotification notification, CancellationToken cancellationToken)
+    {
+        await Task.Yield();
+        throw new InvalidOperationException("Broadcast handler failed");
+    }
+}
+
+public abstract class FaultingBroadcastPeerBase : INotificationHandler<FaultingBroadcastNotification>
+{
+    public static ConcurrentBag<string> Calls { get; } = [];
+
+    public async Task Handle(FaultingBroadcastNotification notification, CancellationToken cancellationToken)
+    {
+        await Task.Yield();
+        Calls.Add(GetType().Name);
+    }
+
+    public static void Reset() => Calls.Clear();
+}
+
+public class FaultingBroadcastPeerA : FaultingBroadcastPeerBase;
+
+public class FaultingBroadcastPeerB : FaultingBroadcastPeerBase;
+
+/// <summary>
 /// Notification with no handlers for testing edge cases.
 /// </summary>
 public record OrphanNotification(string Message) : INotification;

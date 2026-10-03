@@ -85,6 +85,35 @@ public class PublishTests : IDisposable
     }
 
     [Fact]
+    public async Task Publish_WithThreeOrMoreSyncHandlers_NotifiesAllHandlers()
+    {
+        // Arrange
+        SyncBroadcastHandlerBase.Reset();
+
+        // Act
+        await _mediator.Publish(new SyncBroadcastNotification(1));
+
+        // Assert
+        SyncBroadcastHandlerBase.Calls.Should().BeEquivalentTo(
+            [nameof(SyncBroadcastHandlerA), nameof(SyncBroadcastHandlerB), nameof(SyncBroadcastHandlerC)]);
+    }
+
+    [Fact]
+    public async Task Publish_WithThreeOrMoreHandlers_OneFaults_ThrowsAfterOthersComplete()
+    {
+        // Arrange
+        FaultingBroadcastPeerBase.Reset();
+
+        // Act
+        Func<Task> act = () => _mediator.Publish(new FaultingBroadcastNotification(1));
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("Broadcast handler failed");
+        FaultingBroadcastPeerBase.Calls.Should().BeEquivalentTo(
+            [nameof(FaultingBroadcastPeerA), nameof(FaultingBroadcastPeerB)]);
+    }
+
+    [Fact]
     public async Task Publish_WithSingleHandler_WorksCorrectly()
     {
         // Arrange
