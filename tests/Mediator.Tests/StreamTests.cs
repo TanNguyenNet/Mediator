@@ -120,7 +120,7 @@ public class StreamTests : IDisposable
         // Assert
         items.Should().HaveCount(3);
         items.Should().ContainInOrder("Item 0", "Item 1", "Item 2");
-        sw.ElapsedMilliseconds.Should().BeGreaterOrEqualTo(20); // At least 2 delays
+        sw.ElapsedMilliseconds.Should().BeGreaterThanOrEqualTo(20); // At least 2 delays
     }
 
     [Theory]

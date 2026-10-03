@@ -91,8 +91,8 @@ internal sealed class NotificationHandlerWrapper<TNotification> : NotificationHa
                 tasks[i] = handlers[i].Handle(notification, cancellationToken);
             }
 
-            // Await all tasks - use ArraySegment to avoid extra allocation
-            await Task.WhenAll(new ArraySegment<Task>(tasks, 0, handlerCount)).ConfigureAwait(false);
+            // Await all tasks - span overload avoids enumerator allocation
+            await Task.WhenAll(new ReadOnlySpan<Task>(tasks, 0, handlerCount)).ConfigureAwait(false);
         }
         finally
         {
