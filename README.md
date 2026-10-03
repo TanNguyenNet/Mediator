@@ -1,14 +1,15 @@
 # Mediator
 
-[![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/)
+[![NuGet](https://img.shields.io/nuget/v/Mediator.Slim)](https://www.nuget.org/packages/Mediator.Slim)
+[![.NET 10.0](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/Tests-79%20Passed-brightgreen)](tests/Mediator.Tests)
+[![Tests](https://img.shields.io/badge/Tests-84%20Passed-brightgreen)](tests/Mediator.Tests)
 
 High-performance **Mediator pattern** implementation for .NET with **CQRS support**. Inspired by [MediatR](https://github.com/jbogard/MediatR) with focus on performance and simplicity.
 
 ## ✨ Features
 
-- 🚀 **High Performance** - Static caching, minimal allocations, aggressive inlining
+- 🚀 **High Performance** - Static caching, minimal allocations, aggressive inlining, zero-allocation publish for synchronous handlers
 - 📦 **CQRS Ready** - Request/Response, Commands, Queries, and Notifications
 - 🔌 **Pipeline Behaviors** - Cross-cutting concerns (logging, validation, caching)
 - ⚡ **Streaming Support** - `IAsyncEnumerable` for large datasets
@@ -19,9 +20,26 @@ High-performance **Mediator pattern** implementation for .NET with **CQRS suppor
 ## 📦 Installation
 
 ```bash
-dotnet add package Mediator
-dotnet add package Mediator.Extensions.DependencyInjection
+dotnet add package Mediator.Slim
 ```
+
+DI registration (`AddMediator`) is included in the package — no extra package needed.
+
+**Requirements:** .NET 10.0 or later. Use version `1.0.1` for .NET 8.0.
+
+## 🆕 What's New in 2.0.0
+
+- ⬆️ **.NET 10** - Targets `net10.0` (breaking: .NET 8 is no longer supported) with `Microsoft.Extensions.*` 10.0 packages.
+- 🧬 **Polymorphic publish** - `Publish` dispatches on the notification's runtime type, so publishing through a base type (e.g. `DomainEventBase`) or as `object` reaches the concrete type's handlers.
+- ⚡ **Faster notifications** - Publishing to 3+ handlers is non-async, uses `ArrayPool`, and allocates nothing when every handler completes synchronously.
+
+| Handlers (sync) | 1.0.1 | 2.0.0 |
+|---|---|---|
+| 3 | 58 ns / 144 B | 16 ns / 0 B |
+| 10 | 160 ns / 144 B | 37 ns / 0 B |
+| 50 | 697 ns / 144 B | 182 ns / 0 B |
+
+*BenchmarkDotNet on .NET 10, publish fan-out to N handlers; the 1.0.1 column is the 1.0.1 code path run on .NET 10. For async handlers time is unchanged and allocations are lower.*
 
 ## 🚀 Quick Start
 
@@ -106,6 +124,18 @@ public class LogUserCreated : INotificationHandler<UserCreated>
 
 // Usage
 await _mediator.Publish(new UserCreated(1, "John"));
+```
+
+All handlers are started and awaited together; `Publish` completes when every handler has completed and throws if any handler fails.
+
+Publishing through a base type dispatches to the handlers of the runtime type:
+
+```csharp
+public abstract record DomainEventBase : INotification;
+public record OrderCreated(int OrderId) : DomainEventBase;
+
+DomainEventBase domainEvent = new OrderCreated(42);
+await _mediator.Publish(domainEvent); // invokes INotificationHandler<OrderCreated>
 ```
 
 ### Streaming (IAsyncEnumerable)
@@ -205,10 +235,10 @@ services.AddMediator(config =>
 
 ## 🧪 Testing
 
-The library includes **79 comprehensive unit tests** covering:
+The library includes **84 comprehensive unit tests** (xUnit v3) covering:
 
 - ✅ Request/Response handling
-- ✅ Notifications (multiple handlers)
+- ✅ Notifications (single, multiple and 3+ handlers, polymorphic publish)
 - ✅ Pipeline behaviors
 - ✅ Pre/Post processors
 - ✅ Validation
@@ -217,28 +247,30 @@ The library includes **79 comprehensive unit tests** covering:
 - ✅ Exception handling
 
 ```bash
-cd tests/Mediator.Tests
 dotnet test
 ```
+
+`global.json` opts `dotnet test` into Microsoft.Testing.Platform, which xUnit v3 requires on the .NET 10 SDK.
 
 ## 📊 Project Structure
 
 ```
 Mediator/
 ├── src/
-│   ├── Mediator/
-│   │   ├── Abstractions/          # Interfaces
-│   │   ├── Behaviors/             # Pipeline behaviors
-│   │   ├── Exceptions/            # Custom exceptions
-│   │   ├── Validation/            # Validation support
-│   │   ├── Wrappers/              # Handler wrappers
-│   │   ├── Mediator.cs            # Main implementation
-│   │   └── Unit.cs                # Unit type for void returns
-│   └── Mediator.Extensions.DependencyInjection/
+│   └── Mediator/                          # NuGet package: Mediator.Slim
+│       ├── Abstractions/                  # Interfaces
+│       ├── Behaviors/                     # Pipeline behaviors
+│       ├── Exceptions/                    # Custom exceptions
+│       ├── Validation/                    # Validation support
+│       ├── Wrappers/                      # Handler wrappers
+│       ├── Mediator.cs                    # Main implementation
 │       ├── MediatorServiceConfiguration.cs
-│       └── ServiceCollectionExtensions.cs
-└── tests/
-    └── Mediator.Tests/            # Unit tests
+│       ├── ServiceCollectionExtensions.cs # AddMediator registration
+│       └── Unit.cs                        # Unit type for void returns
+├── tests/
+│   └── Mediator.Tests/                    # Unit tests
+└── benchmarks/
+    └── Mediator.Benchmarks/               # BenchmarkDotNet vs MediatR
 ```
 
 ## 🤝 Contributing
